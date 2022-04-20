@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using QuizletWebAPI.Auth.Data;
 using QuizletWebAPI.Auth.Models;
 using QuizletWebAPI.Common;
@@ -28,8 +31,9 @@ namespace QuizletWebAPI.Auth.Controllers
             if (user == null)
                 return Unauthorized();
 
-            // TODO: get JWT
-            throw new NotImplementedException();
+            var token = GenerateJWT(user);
+
+            return Ok(new { access_toket = token });
 
         }
 
@@ -38,5 +42,27 @@ namespace QuizletWebAPI.Auth.Controllers
             return _context.Accounts.SingleOrDefault(a => a.Email == email && a.Password == password);
         }
 
+        private string GenerateJWT(Account user)
+        {
+            var authParams = _options.Value;
+
+            var securityKey = authParams.GetSymmetricSecurityKey();
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Name, user.Login),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+            };
+
+            var token = new JwtSecurityToken(authParams.Issuer,
+                authParams.Audience,
+                claims,
+                expires: DateTime.Now.AddSeconds(authParams.TokenLifeTime),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
