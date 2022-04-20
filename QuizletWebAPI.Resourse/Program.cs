@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using QuizletWebAPI.Common;
 using QuizletWebAPI.Resourse.Data;
 
@@ -24,8 +25,27 @@ builder.Services.AddCors(options =>
     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-var authOptionsConfiguration = builder.Configuration.GetSection("Auth");
-builder.Services.Configure<AuthOptions>(authOptionsConfiguration);
+var authOptions = builder.Configuration.GetSection("Auth").Get<AuthOptions>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = authOptions.Issuer,
+
+            ValidateAudience = true,
+            ValidAudience = authOptions.Audience,
+
+            ValidateLifetime = true,
+
+            // HS256
+            IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
+            ValidateIssuerSigningKey = true
+        };
+    });
 
 var app = builder.Build();
 
@@ -38,6 +58,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(myAllowSpecificOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
