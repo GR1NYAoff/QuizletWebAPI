@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizletWebAPI.Common;
 using QuizletWebAPI.Resourse.Data;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -22,6 +23,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins, builder =>
     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+
+var authOptionsConfiguration = builder.Configuration.GetSection("Auth");
+builder.Services.Configure<AuthOptions>(authOptionsConfiguration);
 
 var app = builder.Build();
 
