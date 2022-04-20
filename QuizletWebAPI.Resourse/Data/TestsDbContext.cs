@@ -8,5 +8,6 @@ namespace QuizletWebAPI.Resourse.Data
         public TestsDbContext(DbContextOptions<TestsDbContext> options) : base(options) { }
 
         public DbSet<Test> Tests { get; set; }
+        public DbSet<Access> Accesses { get; set; }
     }
 }
