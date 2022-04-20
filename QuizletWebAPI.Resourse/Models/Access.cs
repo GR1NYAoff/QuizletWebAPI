@@ -8,6 +8,6 @@ namespace QuizletWebAPI.Resourse.Models
         public Guid UserId { get; set; }
 
         [Required]
-        public int TestId { get; set; }
+        public string TestId { get; set; } = string.Empty;
     }
 }

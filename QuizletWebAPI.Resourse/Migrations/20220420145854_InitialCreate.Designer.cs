@@ -12,8 +12,8 @@ using QuizletWebAPI.Resourse.Data;
 namespace QuizletWebAPI.Resourse.Migrations
 {
     [DbContext(typeof(TestsDbContext))]
-    [Migration("20220420140755_CreateTables")]
-    partial class CreateTables
+    [Migration("20220420145854_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,8 +30,9 @@ namespace QuizletWebAPI.Resourse.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("TestId")
-                        .HasColumnType("int");
+                    b.Property<string>("TestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
