@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizletWebAPI.Auth.Data;
 using QuizletWebAPI.Auth.Models;
@@ -7,6 +9,7 @@ namespace QuizletWebAPI.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TestsController : ControllerBase
     {
         private readonly DataContext _context;
@@ -40,6 +43,12 @@ namespace QuizletWebAPI.Auth.Controllers
         private bool TestExists(int id)
         {
             return _context.Tests.Any(e => e.Id == id);
+        }
+
+        private Task<Dictionary<Guid, int[]>> GetAccessDictionary()
+        {
+            return _context.Accesses
+                .ToDictionaryAsync(t => t.UserId, t => JsonSerializer.Deserialize<int[]>(t.TestId))!;
         }
     }
 }
