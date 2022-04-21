@@ -22,7 +22,7 @@ namespace QuizletWebAPI.Auth.Controllers
 
         // GET: api/Tests
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Test>>> GetTests()
+        public async Task<ActionResult<IEnumerable<Test>>> GetAvailableTests()
         {
             var checkUserId = Guid.TryParse(UserId, out var userId);
             var accessDict = await GetAccessDictionary();
