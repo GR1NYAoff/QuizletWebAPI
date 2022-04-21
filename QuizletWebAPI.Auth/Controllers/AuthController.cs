@@ -33,7 +33,7 @@ namespace QuizletWebAPI.Auth.Controllers
 
             var token = GenerateJWT(user);
 
-            return Ok(token);
+            return Ok(new { access_token = token });
 
         }
 
