@@ -8,9 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizletWebAPI.Auth", "QuizletWebAPI.Auth\QuizletWebAPI.Auth.csproj", "{54BB89AC-F4A4-4FFA-8836-24A844BB4F46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletWebAPI.Auth", "QuizletWebAPI.Auth\QuizletWebAPI.Auth.csproj", "{54BB89AC-F4A4-4FFA-8836-24A844BB4F46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizletWebAPI.Common", "QuizletWebAPI.Common\QuizletWebAPI.Common.csproj", "{BA49BDC5-BA68-4E78-B0DB-5FDD36EBD59B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizletWebAPI.Common", "QuizletWebAPI.Common\QuizletWebAPI.Common.csproj", "{BA49BDC5-BA68-4E78-B0DB-5FDD36EBD59B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
