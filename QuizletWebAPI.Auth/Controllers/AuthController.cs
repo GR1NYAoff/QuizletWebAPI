@@ -33,7 +33,7 @@ namespace QuizletWebAPI.Auth.Controllers
 
             var token = GenerateJWT(user);
 
-            return Ok(new { access_toket = token });
+            return Ok(token);
 
         }
 
@@ -58,7 +58,7 @@ namespace QuizletWebAPI.Auth.Controllers
 
             var token = new JwtSecurityToken(authParams.Issuer,
                 authParams.Audience,
-                claims,
+                claims: claims,
                 expires: DateTime.Now.AddSeconds(authParams.TokenLifeTime),
                 signingCredentials: credentials);
 
