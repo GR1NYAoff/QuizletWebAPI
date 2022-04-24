@@ -37,6 +37,17 @@ namespace QuizletWebAPI.Auth.Controllers
 
         }
 
+        [Route("reg")]
+        [HttpPost]
+        public async Task<IActionResult> Registration(Account account)
+        {
+            _ = _context.Accounts.Add(account);
+            _ = await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+
+        }
+
         private Account? AuthenticateUser(string email, string password)
         {
             return _context.Accounts.SingleOrDefault(a => a.Email == email && a.Password == password);

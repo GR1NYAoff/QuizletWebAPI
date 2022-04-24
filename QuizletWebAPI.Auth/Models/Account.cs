@@ -6,6 +6,7 @@ namespace QuizletWebAPI.Auth.Models
     public class Account
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Required]
