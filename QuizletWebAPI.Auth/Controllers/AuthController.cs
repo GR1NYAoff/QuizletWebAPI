@@ -41,11 +41,19 @@ namespace QuizletWebAPI.Auth.Controllers
         [HttpPost]
         public async Task<IActionResult> Registration(Account account)
         {
+            if (AccountExists(account.Id, account.Email))
+                return BadRequest();
+
             _ = _context.Accounts.Add(account);
             _ = await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+            return Ok();
 
+        }
+
+        private bool AccountExists(Guid id, string email)
+        {
+            return _context.Accounts.Any(a => a.Id == id || a.Email == email);
         }
 
         private Account? AuthenticateUser(string email, string password)
