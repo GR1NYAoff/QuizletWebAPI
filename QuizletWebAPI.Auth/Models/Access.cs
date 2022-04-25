@@ -9,5 +9,10 @@ namespace QuizletWebAPI.Auth.Models
 
         [Required]
         public string TestId { get; set; } = string.Empty;
+        public Access(Guid userId, string testId)
+        {
+            UserId = userId;
+            TestId = testId;
+        }
     }
 }
