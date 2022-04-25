@@ -26,9 +26,9 @@ namespace QuizletWebAPI.Auth.Controllers
 
         [Route("login")]
         [HttpPost]
-        public IActionResult Login([FromBody] Login request)
+        public async Task<IActionResult> LoginAsync([FromBody] Login request)
         {
-            var user = AuthenticateUser(request.Email, request.Password);
+            var user = await AuthenticateUser(request.Email, request.Password);
 
             if (user == null)
                 return Unauthorized();
@@ -41,18 +41,18 @@ namespace QuizletWebAPI.Auth.Controllers
 
         [Route("reg")]
         [HttpPost]
-        public async Task<IActionResult> Registration(Account account)
+        public async Task<IActionResult> RegistrationAsync(Account account)
         {
             if (await AccountExists(account.Id, account.Email))
                 return BadRequest();
 
-            _ = _context.Accounts.Add(account);
+            _ = await _context.Accounts.AddAsync(account);
 
             var access = account.Login == "admin" ?
-                new Access(account.Id, await GetFullAccess()) :
-                new Access(account.Id, await GetRandomAccess());
+                new Access(account.Id, GetFullAccess()) :
+                new Access(account.Id, GetRandomAccess());
 
-            _ = _context.Accesses.Add(access);
+            _ = await _context.Accesses.AddAsync(access);
 
             _ = await _context.SaveChangesAsync();
 
@@ -65,29 +65,28 @@ namespace QuizletWebAPI.Auth.Controllers
             return _context.Accounts.AnyAsync(a => a.Id == id || a.Email == email);
         }
 
-        private async Task<string> GetRandomAccess()
+        private string GetRandomAccess()
         {
-            var result = string.Empty;
             var random = new Random();
 
-            var countTests = _context.Tests.CountAsync();
+            var countTests = _context.Tests.Count();
             var testsIds = _context.Tests.Select(t => t.Id).ToArray();
 
-            result = $"[{testsIds[random.Next(await countTests)]}]";
+            var result = $"[{testsIds[random.Next(countTests)]}]";
 
             return result;
         }
 
-        private async Task<string> GetFullAccess()
+        private string GetFullAccess()
         {
-            var testsIds = _context.Tests.Select(t => t.Id).ToArrayAsync();
+            var testsIds = _context.Tests.Select(t => t.Id).ToArray();
 
-            return JsonSerializer.Serialize(await testsIds);
+            return JsonSerializer.Serialize(testsIds);
         }
 
-        private Account? AuthenticateUser(string email, string password)
+        private Task<Account?> AuthenticateUser(string email, string password)
         {
-            return _context.Accounts.SingleOrDefault(a => a.Email == email && a.Password == password);
+            return _context.Accounts.SingleOrDefaultAsync(a => a.Email == email && a.Password == password);
         }
 
         private string GenerateJWT(Account user)
