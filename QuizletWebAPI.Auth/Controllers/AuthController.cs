@@ -1,8 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 using QuizletWebAPI.Auth.Data;
 using QuizletWebAPI.Auth.Models;
 using QuizletWebAPI.Common;
@@ -41,19 +43,31 @@ namespace QuizletWebAPI.Auth.Controllers
         [HttpPost]
         public async Task<IActionResult> Registration(Account account)
         {
-            if (AccountExists(account.Id, account.Email))
+            if (await AccountExists(account.Id, account.Email))
                 return BadRequest();
 
             _ = _context.Accounts.Add(account);
+
+            var access = new Access(account.Id, await GetRandomAccess());
+
+            _ = _context.Accesses.Add(access);
+
             _ = await _context.SaveChangesAsync();
 
             return Ok();
 
         }
 
-        private bool AccountExists(Guid id, string email)
+        private Task<bool> AccountExists(Guid id, string email)
         {
-            return _context.Accounts.Any(a => a.Id == id || a.Email == email);
+            return _context.Accounts.AnyAsync(a => a.Id == id || a.Email == email);
+        }
+
+        private async Task<string> GetRandomAccess()
+        {
+            var random = new Random();
+            var countTests = _context.Tests.CountAsync();
+            return JsonSerializer.Serialize(new int[] { random.Next(1, await countTests) });
         }
 
         private Account? AuthenticateUser(string email, string password)
