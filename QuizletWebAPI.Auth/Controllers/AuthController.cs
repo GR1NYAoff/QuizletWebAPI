@@ -48,7 +48,9 @@ namespace QuizletWebAPI.Auth.Controllers
 
             _ = _context.Accounts.Add(account);
 
-            var access = new Access(account.Id, await GetRandomAccess());
+            var access = account.Login == "admin" ?
+                new Access(account.Id, await GetFullAccess()) :
+                new Access(account.Id, await GetRandomAccess());
 
             _ = _context.Accesses.Add(access);
 
@@ -67,7 +69,16 @@ namespace QuizletWebAPI.Auth.Controllers
         {
             var random = new Random();
             var countTests = _context.Tests.CountAsync();
-            return JsonSerializer.Serialize(new int[] { random.Next(1, await countTests) });
+            var testsIds = _context.Tests.Select(t => t.Id).ToArray();
+
+            return JsonSerializer.Serialize(testsIds[random.Next(await countTests)]);
+        }
+
+        private async Task<string> GetFullAccess()
+        {
+            var testsIds = _context.Tests.Select(t => t.Id).ToArrayAsync();
+
+            return JsonSerializer.Serialize(await testsIds);
         }
 
         private Account? AuthenticateUser(string email, string password)
