@@ -67,11 +67,15 @@ namespace QuizletWebAPI.Auth.Controllers
 
         private async Task<string> GetRandomAccess()
         {
+            var result = string.Empty;
             var random = new Random();
+
             var countTests = _context.Tests.CountAsync();
             var testsIds = _context.Tests.Select(t => t.Id).ToArray();
 
-            return JsonSerializer.Serialize(testsIds[random.Next(await countTests)]);
+            result = $"[{testsIds[random.Next(await countTests)]}]";
+
+            return result;
         }
 
         private async Task<string> GetFullAccess()
