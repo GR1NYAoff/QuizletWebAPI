@@ -2,7 +2,7 @@
 {
     public class Answer
     {
-        public string BodyAnswer { get; set; } = string.Empty;
-        public bool IsCorrect { get; set; }
+        public int QuestionNumber { get; set; }
+        public BodyAnswer[]? BodyAnswer { get; set; }
     }
 }
